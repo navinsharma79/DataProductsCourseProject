@@ -22,7 +22,7 @@ This will allow for better decision making, such as should a manager substitute 
 The tool described in this presentation takes pitcher and batter inputs (FIP and xwOBA) to project probabilities of the most common outcomes. This is based on modeling built on 2022 Statcast data for every pitch during the MLB regular season.
 
 ## A Shiny tool has been created to model at-bat probabilities
-```{r, out.width="50%"}
+```{r, echo=TRUE, out.width="50%"}
 knitr::include_graphics("./data/shiny_app.png")
 ```
 
