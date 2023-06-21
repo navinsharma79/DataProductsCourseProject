@@ -1,0 +1,50 @@
+---
+title: "Predicting Batting Outcomes Based on Pitcher and Batter Inputs"
+author: "Navin Sharma"
+date: "2023-06-20"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Background
+Major League Baseball captures a significant amount of data through its [Statcast](https://www.mlb.com/glossary/statcast) system. Statcast is based on pitch tracking and batted ball tracking systems that measure multiple events in a baseball game such as pitch speed, pitch spin, pitch type, batted ball speed, batted ball launch angle, etc. 
+
+Multiple advanced measures have been created off of these statistical inputs with two of the most important being [Fielder Independent Pitching (FIP)](https://www.mlb.com/glossary/advanced-stats/fielding-independent-pitching) and [Expected Weighted On-Base Average (xwOBA)](https://www.mlb.com/glossary/statcast/expected-woba). These statistics measure pitcher and batter value respectively independent of the defense's impact. Thus they attempt to measure a player's skill independent from the rest of the environment.
+
+## We can make better projections with advanced statistics
+With the advent of better measures of pitcher and batter skill, it is possible to more accurately predict the probability of outcomes for an at-bat for a combination of pitcher and batter skill. 
+
+This will allow for better decision making, such as should a manager substitute a pinch hitter for the batter (or substitute a relief pitcher) in a critical situation. The first step to making this decision is modeling the projected outcomes.
+
+The tool described in this presentation takes pitcher and batter inputs (FIP and xwOBA) to project probabilities of the most common outcomes. This is based on modeling built on 2022 Statcast data for every pitch during the MLB regular season.
+
+## A Shiny tool has been created to model at-bat probabilities
+```{r, out.width="50%"}
+knitr::include_graphics("./data/shiny_app.png")
+```
+
+* Pitcher FIP: enter a pitcher's projected FIP for an at-bat
+* Batter xwOBA: enter a batter's expected woba for an at-bat
+* Outcome probabilities: shows the projected probabilities for common outcomes
+
+## Server code
+
+As part of the projection, FIP needs to be converted to xwOBA to calculate the xwOBA for an
+at-bat. This is performed by using a prior analysis [comparing FIP and xwOBA on Fangraphs](https://blogs.fangraphs.com/fip-vs-xwoba-for-assessing-pitcher-performance/). The two xwOBAs are then used to calculate a modeled at-bat xwOBA based on a regression equation from the 2022 Statcast data.
+```{r echo=TRUE, eval=FALSE}
+
+pitcher_xwoba <- ((.120)/(5.3-2.5))*(fip-2.5)+.240
+
+# this is the regression data to predict expected woba based on the 
+pitcher and batter info
+#Coefficients:
+#(Intercept)      xwoba_p      xwoba_b  
+#-0.2648       0.9228       0.9365 
+
+model_data <- model_data %>% 
+  mutate(xwoba=(xwoba_pitcher*.9228+xwoba_batter*.9365-.2648))
+```
+
