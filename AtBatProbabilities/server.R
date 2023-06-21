@@ -13,7 +13,8 @@ library(tidyr)
 library(ggplot2)
 
 function(input, output, session) {
-  prob_table <- read.csv("../data/outcome_probs_xwoba.csv")
+#  prob_table <- read.csv("../data/outcome_probs_xwoba.csv")
+  prob_table <- read.csv("https://raw.githubusercontent.com/navinsharma79/DataProductsCourseProject/main/data/outcome_probs_xwoba.csv")
   
   output$probabilityPlot <- renderPlot({
     batter_xwoba <- input$xwoba
